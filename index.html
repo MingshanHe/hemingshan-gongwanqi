@@ -2,25 +2,25 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>致我最爱的你</title>
-    <script src="//unpkg.com/valine/dist/Valine.min.js"></script>
     
     <style>
         /* --- 全局样式 --- */
         body {
             background-color: #000;
             color: #fff;
-            font-family: "Microsoft YaHei", sans-serif;
+            font-family: "Microsoft YaHei", -apple-system, BlinkMacSystemFont, sans-serif;
             margin: 0;
-            overflow-x: hidden;
+            padding: 0;
+            overflow-x: hidden; /* 防止水平滚动条 */
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
         }
 
-        /* --- 背景星空动画 (可选) --- */
+        /* --- 背景星空 (保持不变) --- */
         .bg-stars {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -28,138 +28,127 @@
             background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
         }
 
-        /* --- 3D相册容器 --- */
-        #canvas-container {
-            margin-top: 50px;
-            width: 100%;
-            max-width: 600px;
-            height: 600px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        /* 隐藏原始图片列表，只用于生成 Canvas */
-        #tags { display: none; }
-
-        /* --- 计时器样式 --- */
+        /* --- 1. 计时器样式 (调整为顶部显示) --- */
         .timer-box {
             text-align: center;
-            margin: 20px 0;
-            padding: 20px;
+            margin-top: 40px; /* 距离顶部有一些空间 */
+            margin-bottom: 20px;
+            padding: 15px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 15px;
             backdrop-filter: blur(5px);
-            width: 80%;
-            max-width: 600px;
+            width: 85%; /* 手机端宽度占比较大 */
+            max-width: 500px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
         .timer-box h2 {
             font-weight: 300;
-            font-size: 1.2rem;
+            font-size: 1.1rem; /* 稍微调小字体适配手机 */
             color: #ff99cc;
-            margin-bottom: 10px;
+            margin: 0 0 10px 0;
         }
         #timer {
-            font-size: 1.5rem;
+            font-size: 1.3rem; /* 稍微调小字体适配手机 */
             font-weight: bold;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
+            line-height: 1.5; /* 增加行高，防止换行时太挤 */
         }
 
-        /* --- 留言板样式 --- */
-        .comment-section {
-            width: 80%;
-            max-width: 700px;
-            margin: 30px 0 50px 0;
-            padding: 20px;
-            background: #fff;
-            border-radius: 10px;
-            color: #333;
+        /* --- 2. 3D相册容器样式 (放在计时器下方) --- */
+        #canvas-container {
+            width: 100%;
+            /* 限制最大宽度，防止在平板或电脑上过大 */
+            max-width: 500px; 
+            /* 让容器高度自适应宽度，保持正方形区域，避免手机上被拉伸 */
+            aspect-ratio: 1 / 1; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 50px; /* 底部留白 */
         }
-        .comment-title {
-            text-align: center;
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 1.2rem;
+        
+        /* 确保 Canvas 在容器内自适应 */
+        #myCanvas {
+            width: 100% !important;
+            height: auto !important;
         }
+
+        /* 隐藏原始图片列表 */
+        #tags { display: none; }
+
     </style>
 </head>
 <body>
 
     <div class="bg-stars"></div>
 
+    <div class="timer-box">
+        <h2>我们相爱已经</h2>
+        <div id="timer">计算中...</div>
+    </div>
+
     <div id="canvas-container">
-        <canvas width="600" height="600" id="myCanvas">
-            <p>你的浏览器不支持 Canvas，请升级浏览器。</p>
+        <canvas width="800" height="800" id="myCanvas">
+            <p>你的浏览器不支持 Canvas。</p>
         </canvas>
     </div>
 
     <div id="tags">
         <ul>
-            <li><a href="javascript:void(0)"><img src="images/1.jpg" width="100" height="100"></a></li>
-            <li><a href="javascript:void(0)"><img src="images/2.jpg" width="100" height="100"></a></li>
-            <li><a href="javascript:void(0)"><img src="images/3.png" width="100" height="100"></a></li>
-            <li><a href="javascript:void(0)"><img src="images/4.jpg" width="100" height="100"></a></li>
-            <li><a href="javascript:void(0)"><img src="images/5.jpg" width="100" height="100"></a></li>
-            <li><a href="javascript:void(0)"><img src="images/6.jpg" width="100" height="100"></a></li>
-            <li><a href="javascript:void(0)"><img src="images/7.jpg" width="100" height="100"></a></li>
-            <li><a href="javascript:void(0)"><img src="images/8.jpg" width="100" height="100"></a></li>
-            <li><a href="javascript:void(0)"><img src="images/9.jpg" width="100" height="100"></a></li>
-            <li><a href="javascript:void(0)"><img src="images/10.jpg" width="100" height="100"></a></li>
+            <li><a href="javascript:void(0)"><img src="images/1.jpg"></a></li>
+            <li><a href="javascript:void(0)"><img src="images/2.jpg"></a></li>
+            <li><a href="javascript:void(0)"><img src="images/3.png"></a></li>
+            <li><a href="javascript:void(0)"><img src="images/4.jpg"></a></li>
+            <li><a href="javascript:void(0)"><img src="images/5.jpg"></a></li>
+            <li><a href="javascript:void(0)"><img src="images/6.jpg"></a></li>
+            <li><a href="javascript:void(0)"><img src="images/7.jpg"></a></li>
+            <li><a href="javascript:void(0)"><img src="images/8.jpg"></a></li>
+            <li><a href="javascript:void(0)"><img src="images/9.jpg"></a></li>
+            <li><a href="javascript:void(0)"><img src="images/10.jpg"></a></li>
+            <li><a href="javascript:void(0)"><img src="images/11.jpg"></a></li>
+            <li><a href="javascript:void(0)"><img src="images/12.jpg"></a></li>
         </ul>
-    </div>
-
-    <div class="timer-box">
-        <h2>我们预计相爱已经</h2>
-        <div id="timer">计算中...</div>
-    </div>
-
-    <div class="comment-section">
-        <h3 class="comment-title">写下我们的回忆</h3>
-        <div id="vcomments"></div>
     </div>
 
     <script src="https://www.goat1000.com/tagcanvas.min.js" type="text/javascript"></script>
 
     <script type="text/javascript">
-        // --- 配置区域 (请修改这里) --- //
+        // --- 配置区域 (只需要修改这里的时间) --- //
         
-        // 1. 设置表白成功的日期 (格式：年, 月-1, 日, 时, 分, 秒)
-        // 注意：月份是从0开始的，所以5月要写4，1月要写0
+        // 设置表白成功的日期 (格式：年, 月-1, 日, 时, 分, 秒)
+        // 例如：2023年5月20日 13:14:00 -> new Date(2023, 4, 20, 13, 14, 0);
         const startDate = new Date(2026, 1, 30, 21, 30, 0); 
-
-        // 2. 留言板配置 (需要去 leancloud.cn 注册获取)
-        // 暂时留空，不填 AppId 不会报错，只是不能留言
-        const valineConfig = {
-            appId: '', // 你的 App ID
-            appKey: '' // 你的 App Key
-        };
 
         // ----------------------------- //
 
         // --- 逻辑代码 --- //
 
-        // 1. 启动 3D 相册
+        // 1. 启动 3D 相册 (针对移动端优化了参数)
         window.onload = function() {
             try {
                 TagCanvas.Start('myCanvas', 'tags', {
                     textColour: null,
                     dragControl: true,    // 允许拖动
-                    decel: 0.95,          // 拖动后的惯性
-                    maxSpeed: 0.05,       // 最大旋转速度
-                    initial: [-0.08, 0],  // 初始旋转方向
-                    imageScale: null,     // 图片保持原始比例
+                    decel: 0.92,          // 拖动惯性 (手机上稍微小一点)
+                    maxSpeed: 0.03,       // 最大速度 (手机上慢一点更优雅)
+                    initial: [-0.08, 0],  // 初始转动
+                    imageScale: null,     // 保持图片原比例
                     outlineMethod: 'none',// 无边框
-                    depth: 0.8,           // 深度感
-                    wheelZoom: true,      // 允许滚轮缩放 (放大缩小)
+                    depth: 0.95,          // 深度感更强
+                    wheelZoom: false,     // 【重要】手机端禁用滚轮缩放，防止与页面滚动冲突
+                    pinchZoom: true,      // 【重要】启用手机捏合缩放手势
                     minTags: 0,
-                    imageMode: 'both'     // 既显示图片也支持文字(如果有)
+                    imageMode: 'both',
+                    freezeActive: true,   // 选中时暂停
+                    frontSelect: true     // 点击最前面的才有效
                 });
             } catch(e) {
-                document.getElementById('canvas-container').style.display = 'none';
+                // 出错处理
+                document.getElementById('canvas-container').innerHTML = '<p style="padding:20px;">暂时无法加载照片球，请刷新试试。</p>';
             }
         };
 
-        // 2. 计时器逻辑
+        // 2. 计时器逻辑 (增加手机端换行优化)
         function updateTimer() {
             const now = new Date();
             const diff = now - startDate;
@@ -174,25 +163,22 @@
             const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            // 针对手机屏幕窄的特点，用 <br> 标签在合适的位置换行
+            let timeString = "";
+            if (years > 0) {
+                 timeString += `${years}年 ${days}天<br>`;
+            } else if (days > 0) {
+                 timeString += `${days}天<br>`;
+            }
+            timeString += `${hours}小时 ${minutes}分 ${seconds}秒`;
 
-            document.getElementById("timer").innerHTML = 
-                `${years}年 ${days}天 ${hours}小时 ${minutes}分 ${seconds}秒`;
+            document.getElementById("timer").innerHTML = timeString;
         }
-        setInterval(updateTimer, 1000);
+        // 立即执行一次，然后每秒更新
         updateTimer();
+        setInterval(updateTimer, 1000);
 
-        // 3. 启动留言板
-        // if (valineConfig.appId) {
-        //     new Valine({
-        //         el: '#vcomments',
-        //         appId: valineConfig.appId,
-        //         appKey: valineConfig.appKey,
-        //         placeholder: '亲爱的，在这里留下你想说的话吧...',
-        //         avatar: 'wavatar' // 头像风格
-        //     });
-        // } else {
-        //     document.getElementById('vcomments').innerHTML = '<p style="text-align:center; color:#999;">请配置 LeanCloud AppID 以开启留言功能</p>';
-        // }
     </script>
 </body>
 </html>
