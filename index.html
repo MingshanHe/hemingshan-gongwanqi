@@ -117,7 +117,7 @@
         
         // 设置表白成功的日期 (格式：年, 月-1, 日, 时, 分, 秒)
         // 例如：2023年5月20日 13:14:00 -> new Date(2023, 4, 20, 13, 14, 0);
-        const startDate = new Date(2025, 1, 30, 22, 39, 0); 
+        const startDate = new Date("2026-01-30T22:30:00");
 
         // ----------------------------- //
 
@@ -159,15 +159,19 @@
             }
 
             const years = Math.floor(diff / (1000 * 60 * 60 * 24 * 365));
+            // 计算剩余毫秒数中包含的天数
             const days = Math.floor((diff % (1000 * 60 * 60 * 24 * 365)) / (1000 * 60 * 60 * 24));
+            // 计算剩余毫秒数中包含的小时
             const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            // 计算剩余毫秒数中包含的分钟
             const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            // 计算剩余毫秒数中包含的秒数
             const seconds = Math.floor((diff % (1000 * 60)) / 1000);
             
             // 针对手机屏幕窄的特点，用 <br> 标签在合适的位置换行
             let timeString = "";
             if (years > 0) {
-                 timeString += `${years}年 ${days}天<br>`;
+                 timeString += `${years}年 ${months}月 ${days}天<br>`;
             } else if (days > 0) {
                  timeString += `${days}天<br>`;
             }
